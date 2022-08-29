@@ -9,7 +9,7 @@ const CategoryCreate = {
   InvalidDtoIn: class extends JokesMainUseCaseError {
     constructor() {
       super(...arguments);
-      this.code = `${CategoryCreate.UC_CODE}Invalid DtoIn`;
+      this.code = `${CategoryCreate.UC_CODE}InvalidDtoIn`;
       this.message = "Invalid arguments";
     }
   },
@@ -35,7 +35,7 @@ const CategoryGet = {
   InvalidDtoIn: class extends JokesMainUseCaseError {
     constructor() {
       super(...arguments);
-      this.code = `${CategoryGet.UC_CODE}Invalid DtoIn`;
+      this.code = `${CategoryGet.UC_CODE}InvalidDtoIn`;
       this.message = "Invalid arguments";
     }
   },
@@ -55,7 +55,7 @@ const CategoryList = {
   InvalidDtoIn: class extends JokesMainUseCaseError {
     constructor() {
       super(...arguments);
-      this.code = `${CategoryList.UC_CODE}Invalid DtoIn`;
+      this.code = `${CategoryList.UC_CODE}InvalidDtoIn`;
       this.message = "Invalid arguments";
     }
   },
@@ -74,7 +74,7 @@ const CategoryUpdate = {
   InvalidDtoIn: class extends JokesMainUseCaseError {
     constructor() {
       super(...arguments);
-      this.code = `${CategoryUpdate.UC_CODE}Invalid DtoIn`;
+      this.code = `${CategoryUpdate.UC_CODE}InvalidDtoIn`;
       this.message = "Invalid arguments";
     }
   },
@@ -93,7 +93,7 @@ const CategoryDelete = {
   InvalidDtoIn: class extends JokesMainUseCaseError {
     constructor() {
       super(...arguments);
-      this.code = `${CategoryDelete.UC_CODE}Invalid DtoIn`;
+      this.code = `${CategoryDelete.UC_CODE}InvalidDtoIn`;
       this.message = "Invalid arguments";
     }
   },

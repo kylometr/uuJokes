@@ -11,6 +11,15 @@
           "realization": "dao/JokesMainMongo"
         }
       }
+    },
+    "binary": {
+      "type": "uuAppBinaryStore",
+      "realization": "MongoDB",
+      "schemaMap": {
+        "jokeImage": {
+          "realization": "dao/JokesImageMongo"
+        }
+      }
     }
   }
 }
