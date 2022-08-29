@@ -21,8 +21,9 @@ const helloWorldDtoInType = shape({
 
 const jokeCreateDtoInType = shape({
   name: JOKE_NAME_FORMAT.isRequired(),
-  text: JOKE_TEXT_FORMAT.isRequired(),
-  categoryIdList: array(id(), 1, 10)
+  text: JOKE_TEXT_FORMAT.isRequired("image"),
+  categoryIdList: array(id(), 1, 10),
+  image: binary().isRequired("text")
 });
 
 const jokeGetDtoInType = shape({
@@ -41,9 +42,10 @@ const jokeListDtoInType = shape({
 const jokeUpdateDtoInType = shape({
   id: id().isRequired(),
   name: JOKE_NAME_FORMAT,
-  text: JOKE_TEXT_FORMAT,
+  text: JOKE_TEXT_FORMAT.isRequired("image"),
   categoryIdList: array(id(), 10),
-  visibility: boolean()
+  visibility: boolean(),
+  image: binary().isRequired("text")
 });
 
 const jokeDeleteDtoInType = jokeGetDtoInType;

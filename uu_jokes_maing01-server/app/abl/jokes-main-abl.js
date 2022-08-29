@@ -6,7 +6,10 @@ const { Profile, AppClientTokenService, UuAppWorkspace, UuAppWorkspaceError } = 
 const { UriBuilder } = require("uu_appg01_server").Uri;
 const { LoggerFactory } = require("uu_appg01_server").Logging;
 const { AppClient } = require("uu_appg01_server");
+const { BinaryStoreError, ObjectNotFound } = require("uu_appg01_binarystore");
+const { Base64 } = require("uu_appg01_server").Utils
 
+const FileHelper = require("../helpers/file-helper");
 const Errors = require("../api/errors/jokes-main-error");
 
 const WARNINGS = {
@@ -40,9 +43,11 @@ class JokesMainAbl {
   constructor() {
     this.validator = Validator.load();
     this.dao = DaoFactory.getDao("jokesMain");
+    this.binaryDao = DaoFactory.getDao("jokeImage");
   }
 
   async delete(awid, dtoIn, session) {
+    // Validate input
     let validationResult = this.validator.validate("jokeDeleteDtoInType", dtoIn);
     let uuAppErrorMap = ValidationHelper.processValidationResult(
       dtoIn,
@@ -51,15 +56,31 @@ class JokesMainAbl {
       Errors.JokeDelete.InvalidDtoIn
     );
 
+    // Set identity
     dtoIn.uuIdentity = session.getIdentity().getUuIdentity();
     dtoIn.uuIdentityName = session.getIdentity().getName();
-
     dtoIn.awid = awid;
+
+    // Check if joke exists
     const result = await this.dao.get(awid, dtoIn.id);
     if (!result) {
       throw new Errors.JokeDelete.DaoJokeNotFound({ uuAppErrorMap });
     }
+
+    // Delete joke
     await this.dao.delete(dtoIn);
+
+    // Delete joke's image if present
+    if (result.image) {
+      try {
+        await this.binaryDao.deleteByCode(awid, result.image);
+      } catch (e) {
+        if (e instanceof ObjectNotFound) {
+          throw new Errors.JokeDelete.DaoImageNotFound({ uuAppErrorMap });
+        }
+      }
+    }
+
     const dtoOut = {
       ...result,
       uuAppErrorMap
@@ -68,7 +89,7 @@ class JokesMainAbl {
   }
 
   async update(awid, dtoIn, session) {
-    //TODO vyřešit InvalidCredentials: Unsupported credentials
+    // Validate input
     let validationResult = this.validator.validate("jokeUpdateDtoInType", dtoIn);
     let uuAppErrorMap = ValidationHelper.processValidationResult(
       dtoIn,
@@ -77,10 +98,44 @@ class JokesMainAbl {
       Errors.JokeUpdate.InvalidDtoIn
     );
 
+    // Check if joke exists
+    const joke = await this.dao.get(awid, dtoIn.id);
+    if (!joke) {
+      throw new Errors.JokeUpdate.DaoJokeNotFound({ uuAppErrorMap });
+    }
+
+    // Delete image if it was present
+    if (joke.image) {
+      try {
+        await this.binaryDao.deleteByCode(awid, joke.image);
+      } catch (e) {
+        if (e instanceof ObjectNotFound) {
+          throw new Errors.JokeDelete.DaoImageNotFound({ uuAppErrorMap });
+        }
+      }
+    }
+
+    // Set identity
     dtoIn.uuIdentity = session.getIdentity().getUuIdentity();
     dtoIn.uuIdentityName = session.getIdentity().getName();
-
     dtoIn.awid = awid;
+
+    // Create new image if it is present
+    let jokeImage;
+    if (dtoIn.image) {
+      await validateImage(dtoIn.image, uuAppErrorMap);
+      try {
+        jokeImage = await this.binaryDao.create({ awid }, dtoIn.image);
+        dtoIn.image = jokeImage.code;
+      } catch (e) {
+        if (e instanceof BinaryStoreError) {
+          throw new Errors.JokeCreate.JokeImageDaoCreateFailed({ uuAppErrorMap }, e);
+        }
+        throw e;
+      }
+    }
+
+    // Update joke
     let dtoOut = {};
     try {
       dtoOut = await this.dao.updateOne(dtoIn);
@@ -90,15 +145,14 @@ class JokesMainAbl {
       }
       throw e;
     }
+
     dtoOut.uuAppErrorMap = uuAppErrorMap;
     return dtoOut;
   }
 
   async list(awid, dtoIn) {
-    // HDS 1, 1.1
+    // Validate input
     let validationResult = this.validator.validate("jokeListDtoInType", dtoIn);
-
-    // HDS 1.2, 1.3 // A1, A2
     let uuAppErrorMap = ValidationHelper.processValidationResult(
       dtoIn,
       validationResult,
@@ -106,7 +160,7 @@ class JokesMainAbl {
       Errors.JokeList.InvalidDtoIn
     );
 
-    // HDS 2
+    // Get list of jokes
     let sort = { [dtoIn.sortBy]: (dtoIn.order === "desc") ? -1 : 1 };
     let dtoOut = {};
     try {
@@ -118,12 +172,12 @@ class JokesMainAbl {
       throw e;
     }
 
-    // HDS 3
     dtoOut.uuAppErrorMap = uuAppErrorMap;
     return dtoOut;
   }
 
   async get(awid, dtoIn) {
+    // Validate input
     let validationResult = this.validator.validate("jokeGetDtoInType", dtoIn);
     let uuAppErrorMap = ValidationHelper.processValidationResult(
       dtoIn,
@@ -131,10 +185,13 @@ class JokesMainAbl {
       WARNINGS.jokeGetUnsupportedKeys.code,
       Errors.JokeGet.InvalidDtoIn
     );
-    const result = await this.dao.get(awid, dtoIn.id);
+
+    // Get joke from db
+    let result = await this.dao.get(awid, dtoIn.id);
     if (!result) {
       throw new Errors.JokeGet.JokeDaoGetFailed({ uuAppErrorMap });
     }
+
     const dtoOut = {
       ...result,
       uuAppErrorMap
@@ -143,10 +200,8 @@ class JokesMainAbl {
   }
 
   async create(awid, dtoIn, session, authorizationResult) {
-    // HDS 1, 1.1
+    // Validate input
     let validationResult = this.validator.validate("jokeCreateDtoInType", dtoIn);
-
-    // HDS 1.2, 1.3 // A1, A2
     let uuAppErrorMap = ValidationHelper.processValidationResult(
       dtoIn,
       validationResult,
@@ -154,27 +209,41 @@ class JokesMainAbl {
       Errors.JokeCreate.InvalidDtoIn
     );
 
-    // HDS 2
-    dtoIn.visibility = authorizationResult.getAuthorizedProfiles().includes(EXECUTIVES_PROFILE);
+    // Create image if present
+    let jokeImage;
+    if (dtoIn.image) {
+      await validateImage(dtoIn.image, uuAppErrorMap);
+      try {
+        jokeImage = await this.binaryDao.create({ awid }, dtoIn.image);
+        dtoIn.image = jokeImage.code;
+      } catch (e) {
+        if (e instanceof BinaryStoreError) {
+          throw new Errors.JokeCreate.JokeImageDaoCreateFailed({ uuAppErrorMap }, e);
+        }
+        throw e;
+      }
+    }
 
-    // HDS 3
+    // Set visibility and identity
+    dtoIn.visibility = authorizationResult.getAuthorizedProfiles().includes(EXECUTIVES_PROFILE);
     dtoIn.uuIdentity = session.getIdentity().getUuIdentity();
     dtoIn.uuIdentityName = session.getIdentity().getName();
 
-    // HDS 4
+    // Create joke
     dtoIn.awid = awid;
     let dtoOut = {};
     try {
       dtoOut = await this.dao.create(dtoIn);
     } catch (e) {
+      if (jokeImage) {
+        await this.binaryDao.deleteByCode(awid, jokeImage.code);
+      }
       if (e instanceof ObjectStoreError) {
-        // A3
         throw new Errors.JokeCreate.JokeDaoCreateFailed({ uuAppErrorMap }, e);
       }
       throw e;
     }
 
-    // HDS 5
     dtoOut.uuAppErrorMap = uuAppErrorMap;
     return dtoOut;
   }
@@ -322,6 +391,22 @@ class JokesMainAbl {
 
     // HDS 2
     return dtoOut;
+  }
+}
+
+async function validateImage(image, uuAppErrorMap) {
+  if (image.readable) {
+    // check if stream is valid
+    let { valid: isValidStream } = await FileHelper.validateImageStream(image);
+    if (!isValidStream) {
+      throw new Errors.JokeCreate.InvalidDtoInImage({ uuAppErrorMap });
+    }
+  } else {
+    // check if base64 is valid
+    let binaryBuffer = Base64.urlSafeDecode(image, "binary");
+    if (!FileHelper.validateImageBuffer(binaryBuffer).valid) {
+      throw new Errors.JokeCreate.InvalidDtoInImage({ uuAppErrorMap });
+    }
   }
 }
 
