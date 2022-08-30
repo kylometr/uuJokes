@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "license": "License Commercial",
   "description": {
-    "en": "",
-    "cs": ""
+    "en": "Server project example for developing UAF application in Node.js",
+    "cs": "Příklad projektu pro vývoj UAF aplikace v Node.js"
   },
   "devkit": {
     "development": {
@@ -12,6 +12,15 @@
       "appDeploymentUri": null
     }
   },
-  "uu_jokes_maing01-hi": {},
-  "uu_jokes_maing01-server": {}
+  "uu_jokes_maing01-hi": {
+    "namespace": "UuJokes"
+  },
+  "uu_jokes_maing01-server": {
+    "devkit": {
+      "development": {
+        "appBoxLocationUri": "",
+        "appDeploymentUri": ""
+      }
+    }
+  }
 }
