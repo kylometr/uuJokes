@@ -60,6 +60,7 @@ class CategoryAbl {
   }
 
   async update(awid, dtoIn, session) {
+    // Validate input
     let validationResult = this.validator.validate("categoryUpdateDtoInType", dtoIn);
     let uuAppErrorMap = ValidationHelper.processValidationResult(
       dtoIn,
@@ -68,10 +69,19 @@ class CategoryAbl {
       Errors.CategoryUpdate.InvalidDtoIn
     );
 
+    // Check if category already exists
+    const result = await this.dao.getByFilter(awid, { name: dtoIn.name.toLowerCase() });
+    if (result) {
+      throw new Errors.CategoryCreate.CategoryAlreadyExists({ uuAppErrorMap });
+    }
+
+    // Set properties
     dtoIn.uuIdentity = session.getIdentity().getUuIdentity();
     dtoIn.uuIdentityName = session.getIdentity().getName();
+    dtoIn.name = dtoIn.name.toLowerCase();
     dtoIn.awid = awid;
 
+    // Update category
     let dtoOut = {};
     try {
       dtoOut = await this.dao.updateOne(dtoIn);
@@ -134,6 +144,7 @@ class CategoryAbl {
   }
 
   async create(awid, dtoIn, session) {
+    // Validate input
     let validationResult = this.validator.validate("categoryCreateDtoInType", dtoIn);
     let uuAppErrorMap = ValidationHelper.processValidationResult(
       dtoIn,
@@ -142,15 +153,19 @@ class CategoryAbl {
       Errors.CategoryCreate.InvalidDtoIn
     );
 
+    // Check if category already exists
     const result = await this.dao.getByFilter(awid, { name: dtoIn.name.toLowerCase() });
     if (result) {
       throw new Errors.CategoryCreate.CategoryAlreadyExists({ uuAppErrorMap });
     }
 
+    // Set properties
     dtoIn.uuIdentity = session.getIdentity().getUuIdentity();
     dtoIn.uuIdentityName = session.getIdentity().getName();
-
+    dtoIn.name = dtoIn.name.toLowerCase();
     dtoIn.awid = awid;
+
+    // Create category
     let dtoOut = {};
     try {
       dtoOut = await this.dao.create(dtoIn);

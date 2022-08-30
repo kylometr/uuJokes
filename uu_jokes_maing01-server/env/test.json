@@ -1,9 +1,9 @@
 {
-  "asid_license_owner_list": ["14-2710-1"],
+  "asid_license_owner_list": ["14-2710-1", "4501-9737-1"],
   "asid": "11111111111111111111111111111111",
   "sysUuAppWorkspace": {
     "awid": "22222222222222222222222222222222",
-    "awidLicenseOwnerList": ["14-2710-1"]
+    "awidLicenseOwnerList": ["14-2710-1", "4501-9737-1"]
   },
   "userMap": {
     "AsidLicenseOwner": {

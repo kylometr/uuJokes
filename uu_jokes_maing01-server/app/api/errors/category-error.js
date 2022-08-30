@@ -4,12 +4,12 @@ const JokesMainUseCaseError = require("./jokes-main-use-case-error.js");
 const CATEGORY_ERROR_PREFIX = `${JokesMainUseCaseError.ERROR_PREFIX}category/`;
 
 const CategoryCreate = {
-  UC_CODE: `${CATEGORY_ERROR_PREFIX}/create/`,
+  UC_CODE: `${CATEGORY_ERROR_PREFIX}create/`,
 
   InvalidDtoIn: class extends JokesMainUseCaseError {
     constructor() {
       super(...arguments);
-      this.code = `${CategoryCreate.UC_CODE}InvalidDtoIn`;
+      this.code = `${CategoryCreate.UC_CODE}invalidDtoIn`;
       this.message = "Invalid arguments";
     }
   },
@@ -35,7 +35,7 @@ const CategoryGet = {
   InvalidDtoIn: class extends JokesMainUseCaseError {
     constructor() {
       super(...arguments);
-      this.code = `${CategoryGet.UC_CODE}InvalidDtoIn`;
+      this.code = `${CategoryGet.UC_CODE}invalidDtoIn`;
       this.message = "Invalid arguments";
     }
   },
@@ -55,7 +55,7 @@ const CategoryList = {
   InvalidDtoIn: class extends JokesMainUseCaseError {
     constructor() {
       super(...arguments);
-      this.code = `${CategoryList.UC_CODE}InvalidDtoIn`;
+      this.code = `${CategoryList.UC_CODE}invalidDtoIn`;
       this.message = "Invalid arguments";
     }
   },
@@ -74,7 +74,7 @@ const CategoryUpdate = {
   InvalidDtoIn: class extends JokesMainUseCaseError {
     constructor() {
       super(...arguments);
-      this.code = `${CategoryUpdate.UC_CODE}InvalidDtoIn`;
+      this.code = `${CategoryUpdate.UC_CODE}invalidDtoIn`;
       this.message = "Invalid arguments";
     }
   },
@@ -93,14 +93,14 @@ const CategoryDelete = {
   InvalidDtoIn: class extends JokesMainUseCaseError {
     constructor() {
       super(...arguments);
-      this.code = `${CategoryDelete.UC_CODE}InvalidDtoIn`;
+      this.code = `${CategoryDelete.UC_CODE}invalidDtoIn`;
       this.message = "Invalid arguments";
     }
   },
   DaoCategoryNotFound: class extends JokesMainUseCaseError {
     constructor() {
       super(...arguments);
-      this.code = `${CategoryDelete.UC_CODE}categoryDaoDeleteFailed`;
+      this.code = `${CategoryDelete.UC_CODE}categoryDaoNotFound`;
       this.message = "Category not found.";
     }
   }

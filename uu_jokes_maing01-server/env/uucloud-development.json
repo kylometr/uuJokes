@@ -2,14 +2,14 @@
   "schemaVersion": "1.0.0",
   "schemaSpecificationUri": "https://uuapp.plus4u.net/uu-bookkit-maing01/bef682626ed943f28cde360ccb325981/book/page?code=uuSubAppInstanceDescriptor",
   "uuSubApp": {
-    "code": "UU.JOKES.MAING01",
+    "code": "TGA.TRAININGA10.MAING01",
     "version": "0.1.0",
-    "name": "uuJokesMaing01",
-    "description": "",
+    "name": "uuJokes",
+    "description": "Server project example for developing UAF application in Node.js",
     "license": "License Commercial",
     "asidRequired": true,
     "awidCount": 1,
-    "resourcePoolUri": "----- VALUE REQUIRED -----",
+    "resourcePoolUri": "ues:UCL-BT[118500965363973101]:TRAINING_AWE[621d29e0a1342b5e22058b84]",
     "uuAppNodeSetMap": {
       "CMD": {
         "nodeSize": "G1_S",
@@ -29,7 +29,35 @@
         "alias": "primary"
       }
     },
+    "uuAppBinaryStoreMap": {
+      "BSID_1": {
+        "technology": "MongoDB-4.0",
+        "size": 0.25,
+        "alias": "binary"
+      }
+    },
     "uuConfigMap": {
+      "asid_license_owner_list": ["579-2719-5826-1"]
+    },
+    "uuSubAppInstance": {
+      "asid": "687ef6c6ff6c1c50887f949e7c045b56",
+      "asidOwner": "579-2719-5826-1",
+      "awidList": [
+        {
+          "awid": "5b202455c8a65a8fba14edf42d87a57e",
+          "awidOwner": "579-3536-4877-1"
+        }
+      ],
+      "uuAppObjectStoreMap": {
+        "OSID_1": {
+          "osid": "cq0k6zgd2z5hqugbcod19zrbqhn6dwdwt"
+        }
+      },
+      "uuAppBinaryStoreMap": {
+        "BSID_1": {
+          "bsid": "cympqg6r9d3s3pltwcn32dvgooccbw5zx"
+        }
+      }
     }
   }
 }

@@ -56,14 +56,14 @@ const JokeCreate = {
   InvalidDtoIn: class extends JokesMainUseCaseError {
     constructor() {
       super(...arguments);
-      this.code = `${JokeCreate.UC_CODE}InvalidDtoIn`;
+      this.code = `${JokeCreate.UC_CODE}invalidDtoIn`;
       this.message = "Invalid arguments";
     }
   },
   InvalidDtoInImage: class extends JokesMainUseCaseError {
     constructor() {
       super(...arguments);
-      this.code = `${JokeCreate.UC_CODE}InvalidDtoInImageType`;
+      this.code = `${JokeCreate.UC_CODE}invalidDtoInImageType`;
       this.message = "Invalid file content type.";
     }
   },
@@ -72,6 +72,13 @@ const JokeCreate = {
       super(...arguments);
       this.code = `${JokeCreate.UC_CODE}jokeDaoCreateFailed`;
       this.message = "Dao failed to create joke.";
+    }
+  },
+  JokeDaoCategoryNotFound: class extends JokesMainUseCaseError {
+    constructor() {
+      super(...arguments);
+      this.code = `${JokeCreate.UC_CODE}jokeDaoCategoryNotFound`;
+      this.message = "Dao failed to find joke category.";
     }
   },
   JokeImageDaoCreateFailed: class extends JokesMainUseCaseError {
@@ -89,7 +96,7 @@ const JokeGet = {
   InvalidDtoIn: class extends JokesMainUseCaseError {
     constructor() {
       super(...arguments);
-      this.code = `${JokeGet.UC_CODE}InvalidDtoIn`;
+      this.code = `${JokeGet.UC_CODE}invalidDtoIn`;
       this.message = "Invalid arguments";
     }
   },
@@ -109,7 +116,7 @@ const JokeList = {
   InvalidDtoIn: class extends JokesMainUseCaseError {
     constructor() {
       super(...arguments);
-      this.code = `${JokeList.UC_CODE}InvalidDtoIn`;
+      this.code = `${JokeList.UC_CODE}invalidDtoIn`;
       this.message = "Invalid arguments";
     }
   },
@@ -128,7 +135,7 @@ const JokeUpdate = {
   InvalidDtoIn: class extends JokesMainUseCaseError {
     constructor() {
       super(...arguments);
-      this.code = `${JokeUpdate.UC_CODE}InvalidDtoIn`;
+      this.code = `${JokeUpdate.UC_CODE}invalidDtoIn`;
       this.message = "Invalid arguments";
     }
   },
@@ -139,13 +146,41 @@ const JokeUpdate = {
       this.message = "Joke not found.";
     }
   },
+  JokeDaoCategoryNotFound: class extends JokesMainUseCaseError {
+    constructor() {
+      super(...arguments);
+      this.code = `${JokeUpdate.UC_CODE}jokeDaoCategoryNotFound`;
+      this.message = "Joke's image not found.";
+    }
+  },
+  DaoImageNotFound: class extends JokesMainUseCaseError {
+    constructor() {
+      super(...arguments);
+      this.code = `${JokeUpdate.UC_CODE}jokeDaoImageNotFound`;
+      this.message = "Dao failed to find category.";
+    }
+  },
   JokeDaoUpdateFailed: class extends JokesMainUseCaseError {
     constructor() {
       super(...arguments);
       this.code = `${JokeUpdate.UC_CODE}jokeDaoUpdateFailed`;
       this.message = "Dao failed to update joke."
     }
-  }
+  },
+  JokeImageDaoCreateFailed: class extends JokesMainUseCaseError {
+    constructor() {
+      super(...arguments);
+      this.code = `${JokeUpdate.UC_CODE}jokeImageDaoCreateFailed`;
+      this.message = "Dao failed to create joke's image";
+    }
+  },
+  InvalidDtoInImage: class extends JokesMainUseCaseError {
+    constructor() {
+      super(...arguments);
+      this.code = `${JokeUpdate.UC_CODE}invalidDtoInImageType`;
+      this.message = "Invalid file content type.";
+    }
+  },
 };
 
 const JokeDelete = {
@@ -154,14 +189,14 @@ const JokeDelete = {
   InvalidDtoIn: class extends JokesMainUseCaseError {
     constructor() {
       super(...arguments);
-      this.code = `${JokeDelete.UC_CODE}InvalidDtoIn`;
+      this.code = `${JokeDelete.UC_CODE}invalidDtoIn`;
       this.message = "Invalid arguments";
     }
   },
   DaoJokeNotFound: class extends JokesMainUseCaseError {
     constructor() {
       super(...arguments);
-      this.code = `${JokeDelete.UC_CODE}jokeDaoDeleteFailed`;
+      this.code = `${JokeDelete.UC_CODE}jokeDaoNotFound`;
       this.message = "Joke not found.";
     }
   },

@@ -1,4 +1,6 @@
 "use strict";
+const { Base64 } = require("uu_appg01_server").Utils
+
 const fileType = require("file-type");
 
 const IMAGE_MIME_TYPE_PREFIX = "image/";
@@ -35,6 +37,22 @@ class FileHelper {
     stream.push(buffer);
     stream.push(null);
     return stream;
+  }
+
+  async validateImage(image, uuAppErrorMap, errorClass) {
+    if (image.readable) {
+      // Check if stream is valid
+      let { valid: isValidStream } = await this.validateImageStream(image);
+      if (!isValidStream) {
+        throw new errorClass({ uuAppErrorMap });
+      }
+    } else {
+      // Check if base64 is valid
+      let binaryBuffer = Base64.urlSafeDecode(image, "binary");
+      if (!this.validateImageBuffer(binaryBuffer).valid) {
+        throw new errorClass({ uuAppErrorMap });
+      }
+    }
   }
 }
 
